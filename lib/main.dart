@@ -234,7 +234,7 @@ class _AirplanesMapState extends State<AirplanesMap> {
               // Flight Company Text Field
               TextField(
                 decoration: InputDecoration(
-                  labelText: 'Flight Company',
+                  labelText: 'Origin',
                   labelStyle: TextStyle(color: Color(0xFF002157)),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(8.0)),
@@ -254,7 +254,7 @@ class _AirplanesMapState extends State<AirplanesMap> {
                     borderRadius: BorderRadius.all(Radius.circular(8.0)),
                     borderSide: BorderSide(color: Color(0xFF002157)),
                   ),
-                  suffixIcon: Icon(Icons.location_on),
+                  suffixIcon: Icon(Icons.flight_land),
                 ),
               ),
             ],
