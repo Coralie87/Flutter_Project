@@ -1,0 +1,1259 @@
+{
+"IATA Airlines":[
+ {
+  "Airline Name": "ABSA Cargo Airline",
+  "ICAO Designator": "TUS",
+  "Country": "Brazil"
+ },
+ {
+  "Airline Name": "Adria Airways",
+  "ICAO Designator": "ADR",
+  "Country": "Slovenia"
+ },
+ {
+  "Airline Name": "Aegean Airlines",
+  "ICAO Designator": "AEE",
+  "Country": "Greece"
+ },
+ {
+  "Airline Name": "Aer Lingus",
+  "ICAO Designator": "EIN",
+  "Country": "Ireland"
+ },
+ {
+  "Airline Name": "Aero República",
+  "ICAO Designator": "RBP",
+  "Country": "Colombia"
+ },
+ {
+  "Airline Name": "Aeroflot",
+  "ICAO Designator": "AFL",
+  "Country": "Russian Federation"
+ },
+ {
+  "Airline Name": "Aerolineas Argentinas",
+  "ICAO Designator": "ARG",
+  "Country": "Argentina"
+ },
+ {
+  "Airline Name": "Aerolineas Galapagos S.A. Aerogal",
+  "ICAO Designator": 547,
+  "Country": "Ecuador"
+ },
+ {
+  "Airline Name": "Aeromexico",
+  "ICAO Designator": "AMX",
+  "Country": "Mexico"
+ },
+ {
+  "Airline Name": "Afriqiyah Airways",
+  "ICAO Designator": "AAW",
+  "Country": "Libya"
+ },
+ {
+  "Airline Name": "Aigle Azur",
+  "ICAO Designator": "AAF",
+  "Country": "France"
+ },
+ {
+  "Airline Name": "Air Algérie",
+  "ICAO Designator": "DAH",
+  "Country": "Algeria"
+ },
+ {
+  "Airline Name": "Air Arabia",
+  "ICAO Designator": "ABY",
+  "Country": "United Arab Emirates"
+ },
+ {
+  "Airline Name": "Air Astana",
+  "ICAO Designator": "KZR",
+  "Country": "Kazakhstan"
+ },
+ {
+  "Airline Name": "Air Austral",
+  "ICAO Designator": "REU",
+  "Country": "France"
+ },
+ {
+  "Airline Name": "Air Baltic",
+  "ICAO Designator": "BTI",
+  "Country": "Latvia"
+ },
+ {
+  "Airline Name": "Air Berlin",
+  "ICAO Designator": "BER",
+  "Country": "Germany"
+ },
+ {
+  "Airline Name": "Air Botswana",
+  "ICAO Designator": "BOT",
+  "Country": "Botswana"
+ },
+ {
+  "Airline Name": "Air Caledonie",
+  "ICAO Designator": "TPC",
+  "Country": "New Caledonia"
+ },
+ {
+  "Airline Name": "Air Canada",
+  "ICAO Designator": "ACA",
+  "Country": "Canada"
+ },
+ {
+  "Airline Name": "Air China Limited",
+  "ICAO Designator": "CCA",
+  "Country": "China (People's Republic of)"
+ },
+ {
+  "Airline Name": "Air Corsica",
+  "ICAO Designator": "CCM",
+  "Country": "France"
+ },
+ {
+  "Airline Name": "Air Europa",
+  "ICAO Designator": "AEA",
+  "Country": "Spain"
+ },
+ {
+  "Airline Name": "Air France",
+  "ICAO Designator": "AFR",
+  "Country": "France"
+ },
+ {
+  "Airline Name": "Air India",
+  "ICAO Designator": "AIC",
+  "Country": "India"
+ },
+ {
+  "Airline Name": "Air Koryo",
+  "ICAO Designator": "KOR",
+  "Country": "Korea, Democratic People's Republic of"
+ },
+ {
+  "Airline Name": "Air Macau",
+  "ICAO Designator": "AMU",
+  "Country": "Macao SAR, China"
+ },
+ {
+  "Airline Name": "Air Madagascar",
+  "ICAO Designator": "MDG",
+  "Country": "Madagascar"
+ },
+ {
+  "Airline Name": "Air Malta",
+  "ICAO Designator": "AMC",
+  "Country": "Malta"
+ },
+ {
+  "Airline Name": "Air Mauritius",
+  "ICAO Designator": "MAU",
+  "Country": "Mauritius"
+ },
+ {
+  "Airline Name": "Air Moldova",
+  "ICAO Designator": "MLD",
+  "Country": "Moldova, Republic of"
+ },
+ {
+  "Airline Name": "Air Namibia",
+  "ICAO Designator": "NMB",
+  "Country": "Namibia"
+ },
+ {
+  "Airline Name": "Air New Zealand",
+  "ICAO Designator": "ANZ",
+  "Country": "New Zealand"
+ },
+ {
+  "Airline Name": "Air Niugini",
+  "ICAO Designator": "ANG",
+  "Country": "Independent State of Papua New Guinea"
+ },
+ {
+  "Airline Name": "Air Nostrum",
+  "ICAO Designator": "ANE",
+  "Country": "Spain"
+ },
+ {
+  "Airline Name": "Air One S.p.A.",
+  "ICAO Designator": "ADH",
+  "Country": "Italy"
+ },
+ {
+  "Airline Name": "Air SERBIA a.d. Beograd",
+  "ICAO Designator": "JAT",
+  "Country": "Serbia"
+ },
+ {
+  "Airline Name": "Air Seychelles",
+  "ICAO Designator": "SEY",
+  "Country": "Seychelles"
+ },
+ {
+  "Airline Name": "Air Tahiti",
+  "ICAO Designator": "VTA",
+  "Country": "French Polynesia"
+ },
+ {
+  "Airline Name": "Air Tahiti Nui",
+  "ICAO Designator": "THT",
+  "Country": "French Polynesia"
+ },
+ {
+  "Airline Name": "Air Transat",
+  "ICAO Designator": "TSC",
+  "Country": "Canada"
+ },
+ {
+  "Airline Name": "Air Uganda",
+  "ICAO Designator": "UGA",
+  "Country": "Uganda"
+ },
+ {
+  "Airline Name": "Air Vanuatu",
+  "ICAO Designator": "AVN",
+  "Country": "Vanuatu"
+ },
+ {
+  "Airline Name": "AirBridgeCargo Airlines",
+  "ICAO Designator": "ABW",
+  "Country": "Russian Federation"
+ },
+ {
+  "Airline Name": "Aircalin",
+  "ICAO Designator": "ACI",
+  "Country": "New Caledonia"
+ },
+ {
+  "Airline Name": "Airlink",
+  "Country": "South Africa"
+ },
+ {
+  "Airline Name": "Alaska Airlines",
+  "ICAO Designator": "ASA",
+  "Country": "United States"
+ },
+ {
+  "Airline Name": "Alitalia",
+  "ICAO Designator": "AZA",
+  "Country": "Italy"
+ },
+ {
+  "Airline Name": "All Nippon Airways",
+  "ICAO Designator": "ANA",
+  "Country": "Japan"
+ },
+ {
+  "Airline Name": "AlMasria Universal Airlines",
+  "ICAO Designator": "LMU",
+  "Country": "Egypt"
+ },
+ {
+  "Airline Name": "ALS",
+  "Country": "Kenya"
+ },
+ {
+  "Airline Name": "American Airlines",
+  "ICAO Designator": "AAL",
+  "Country": "United States"
+ },
+ {
+  "Airline Name": "Arik Air",
+  "ICAO Designator": "ARA",
+  "Country": "Nigeria"
+ },
+ {
+  "Airline Name": "Arkia Israeli Airlines",
+  "ICAO Designator": "AIZ",
+  "Country": "Israel"
+ },
+ {
+  "Airline Name": "Asia Pacific Airlines",
+  "ICAO Designator": "MGE",
+  "Country": "United States"
+ },
+ {
+  "Airline Name": "Asiana",
+  "ICAO Designator": "AAR",
+  "Country": "Korea"
+ },
+ {
+  "Airline Name": "Atlas Air",
+  "ICAO Designator": "GTI",
+  "Country": "United States"
+ },
+ {
+  "Airline Name": "Atlasjet Airlines",
+  "ICAO Designator": "KKK",
+  "Country": "Turkey"
+ },
+ {
+  "Airline Name": "Austral",
+  "ICAO Designator": "AUT",
+  "Country": "Argentina"
+ },
+ {
+  "Airline Name": "Austrian",
+  "ICAO Designator": "AUA",
+  "Country": "Austria"
+ },
+ {
+  "Airline Name": "AVIANCA",
+  "ICAO Designator": "AVA",
+  "Country": "Colombia"
+ },
+ {
+  "Airline Name": "Avianca Brasil",
+  "ICAO Designator": "ONE",
+  "Country": "Brazil"
+ },
+ {
+  "Airline Name": "Azerbaijan Airlines",
+  "ICAO Designator": "AHY",
+  "Country": "Azerbaijan"
+ },
+ {
+  "Airline Name": "B&H Airlines",
+  "ICAO Designator": "BON",
+  "Country": "Bosnia and Herzegovina"
+ },
+ {
+  "Airline Name": "Bangkok Air",
+  "ICAO Designator": "BKP",
+  "Country": "Thailand"
+ },
+ {
+  "Airline Name": "Belavia - Belarusian Airlines",
+  "ICAO Designator": "BRU",
+  "Country": "Belarus"
+ },
+ {
+  "Airline Name": "BH AIR",
+  "ICAO Designator": "BGH",
+  "Country": "Bulgaria"
+ },
+ {
+  "Airline Name": "Biman",
+  "ICAO Designator": "BBC",
+  "Country": "Bangladesh"
+ },
+ {
+  "Airline Name": "Binter Canarias",
+  "ICAO Designator": "IBB",
+  "Country": "Spain"
+ },
+ {
+  "Airline Name": "Blue Panorama",
+  "ICAO Designator": "BPA",
+  "Country": "Italy"
+ },
+ {
+  "Airline Name": "Blue1",
+  "ICAO Designator": "BLF",
+  "Country": "Finland"
+ },
+ {
+  "Airline Name": "bmi Regional",
+  "ICAO Designator": "BMR",
+  "Country": "United Kingdom"
+ },
+ {
+  "Airline Name": "Boliviana de Aviación - BoA",
+  "ICAO Designator": "BOV",
+  "Country": "Bolivia"
+ },
+ {
+  "Airline Name": "British Airways",
+  "ICAO Designator": "BAW",
+  "Country": "United Kingdom"
+ },
+ {
+  "Airline Name": "Brussels Airlines",
+  "ICAO Designator": "BEL",
+  "Country": "Belgium"
+ },
+ {
+  "Airline Name": "Bulgaria air",
+  "ICAO Designator": "LZB",
+  "Country": "Bulgaria"
+ },
+ {
+  "Airline Name": "C.A.L. Cargo Airlines",
+  "ICAO Designator": "ICL",
+  "Country": "Israel"
+ },
+ {
+  "Airline Name": "Cargojet Airways",
+  "ICAO Designator": "CJT",
+  "Country": "Canada"
+ },
+ {
+  "Airline Name": "Cargolux S.A.",
+  "ICAO Designator": "CLX",
+  "Country": "Luxembourg"
+ },
+ {
+  "Airline Name": "Caribbean Airlines",
+  "ICAO Designator": "BWA",
+  "Country": "Jamaica"
+ },
+ {
+  "Airline Name": "Carpatair",
+  "ICAO Designator": "KRP",
+  "Country": "Romania"
+ },
+ {
+  "Airline Name": "Cathay Pacific",
+  "ICAO Designator": "CPA",
+  "Country": "Hong Kong SAR, China"
+ },
+ {
+  "Airline Name": "China Airlines",
+  "ICAO Designator": "CAL",
+  "Country": "Chinese Taipei"
+ },
+ {
+  "Airline Name": "China Cargo Airlines",
+  "Country": "China (People's Republic of)"
+ },
+ {
+  "Airline Name": "China Eastern",
+  "ICAO Designator": "CES",
+  "Country": "China (People's Republic of)"
+ },
+ {
+  "Airline Name": "China Postal Airlines",
+  "ICAO Designator": "CYZ",
+  "Country": "China (People's Republic of)"
+ },
+ {
+  "Airline Name": "China Southern Airlines",
+  "ICAO Designator": "CSN",
+  "Country": "China (People's Republic of)"
+ },
+ {
+  "Airline Name": "CityJet",
+  "ICAO Designator": "BCY",
+  "Country": "Ireland"
+ },
+ {
+  "Airline Name": "Comair",
+  "ICAO Designator": "CAW",
+  "Country": "South Africa"
+ },
+ {
+  "Airline Name": "Condor",
+  "ICAO Designator": "CFG",
+  "Country": "Germany"
+ },
+ {
+  "Airline Name": "COPA Airlines",
+  "ICAO Designator": "CMP",
+  "Country": "Panama"
+ },
+ {
+  "Airline Name": "Corendon Airlines",
+  "ICAO Designator": "CAI",
+  "Country": "Turkey"
+ },
+ {
+  "Airline Name": "Corsair International",
+  "ICAO Designator": "CRL",
+  "Country": "France"
+ },
+ {
+  "Airline Name": "Croatia Airlines",
+  "ICAO Designator": "CTN",
+  "Country": "Croatia"
+ },
+ {
+  "Airline Name": "Cubana",
+  "ICAO Designator": "CUB",
+  "Country": "Cuba"
+ },
+ {
+  "Airline Name": "Cyprus Airways",
+  "ICAO Designator": "CYP",
+  "Country": "Cyprus"
+ },
+ {
+  "Airline Name": "Czech Airlines j.s.c",
+  "ICAO Designator": "CSA",
+  "Country": "Czech Republic"
+ },
+ {
+  "Airline Name": "Delta Air Lines",
+  "ICAO Designator": "DAL",
+  "Country": "United States"
+ },
+ {
+  "Airline Name": "DHL Air",
+  "ICAO Designator": "DHK",
+  "Country": "United Kingdom"
+ },
+ {
+  "Airline Name": "DHL Aviation EEMEA B.S.C.(c)",
+  "ICAO Designator": "DHX",
+  "Country": "Bahrain"
+ },
+ {
+  "Airline Name": "Donavia",
+  "ICAO Designator": "DNV",
+  "Country": "Russian Federation"
+ },
+ {
+  "Airline Name": "Dragonair",
+  "ICAO Designator": "HDA",
+  "Country": "Hong Kong SAR, China"
+ },
+ {
+  "Airline Name": "Egyptair",
+  "ICAO Designator": "MSR",
+  "Country": "Egypt"
+ },
+ {
+  "Airline Name": "EL AL",
+  "ICAO Designator": "ELY",
+  "Country": "Israel"
+ },
+ {
+  "Airline Name": "Emirates",
+  "ICAO Designator": "UAE",
+  "Country": "United Arab Emirates"
+ },
+ {
+  "Airline Name": "Estonian Air",
+  "ICAO Designator": "ELL",
+  "Country": "Estonia"
+ },
+ {
+  "Airline Name": "Ethiopian Airlines",
+  "ICAO Designator": "ETH",
+  "Country": "Ethiopia"
+ },
+ {
+  "Airline Name": "Etihad Airways",
+  "ICAO Designator": "ETD",
+  "Country": "United Arab Emirates"
+ },
+ {
+  "Airline Name": "Euroatlantic Airways",
+  "ICAO Designator": "MMZ",
+  "Country": "Portugal"
+ },
+ {
+  "Airline Name": "European Air Transport",
+  "ICAO Designator": "BCS",
+  "Country": "Germany"
+ },
+ {
+  "Airline Name": "Eurowings",
+  "ICAO Designator": "EWG",
+  "Country": "Germany"
+ },
+ {
+  "Airline Name": "EVA Air",
+  "ICAO Designator": "EVA",
+  "Country": "Chinese Taipei"
+ },
+ {
+  "Airline Name": "Federal Express",
+  "ICAO Designator": "FDX",
+  "Country": "United States"
+ },
+ {
+  "Airline Name": "Fiji Airways",
+  "ICAO Designator": "FJI",
+  "Country": "Fiji"
+ },
+ {
+  "Airline Name": "Finnair",
+  "ICAO Designator": "FIN",
+  "Country": "Finland"
+ },
+ {
+  "Airline Name": "flybe",
+  "ICAO Designator": "BEE",
+  "Country": "United Kingdom"
+ },
+ {
+  "Airline Name": "Freebird Airlines",
+  "ICAO Designator": "FHY",
+  "Country": "Turkey"
+ },
+ {
+  "Airline Name": "Garuda",
+  "ICAO Designator": "GIA",
+  "Country": "Indonesia"
+ },
+ {
+  "Airline Name": "Georgian Airways",
+  "ICAO Designator": "TGZ",
+  "Country": "Georgia"
+ },
+ {
+  "Airline Name": "Germania",
+  "ICAO Designator": "GMI",
+  "Country": "Germany"
+ },
+ {
+  "Airline Name": "Gulf Air",
+  "ICAO Designator": "GFA",
+  "Country": "Bahrain"
+ },
+ {
+  "Airline Name": "Hahn Air",
+  "ICAO Designator": "HHN",
+  "Country": "Germany"
+ },
+ {
+  "Airline Name": "Hainan Airlines",
+  "ICAO Designator": "CHH",
+  "Country": "China (People's Republic of)"
+ },
+ {
+  "Airline Name": "Hawaiian Airlines",
+  "ICAO Designator": "HAL",
+  "Country": "United States"
+ },
+ {
+  "Airline Name": "Hi Fly",
+  "ICAO Designator": "HFY",
+  "Country": "Portugal"
+ },
+ {
+  "Airline Name": "Hong Kong Airlines",
+  "ICAO Designator": "CRK",
+  "Country": "Hong Kong SAR, China"
+ },
+ {
+  "Airline Name": "Hong Kong Express Airways",
+  "ICAO Designator": "HKE",
+  "Country": "Hong Kong SAR, China"
+ },
+ {
+  "Airline Name": "IBERIA",
+  "ICAO Designator": "IBE",
+  "Country": "Spain"
+ },
+ {
+  "Airline Name": "Icelandair",
+  "ICAO Designator": "ICE",
+  "Country": "Iceland"
+ },
+ {
+  "Airline Name": "InselAir",
+  "ICAO Designator": "INC",
+  "Country": "Curaçao"
+ },
+ {
+  "Airline Name": "Interair",
+  "ICAO Designator": "ILN",
+  "Country": "South Africa"
+ },
+ {
+  "Airline Name": "InterSky",
+  "Country": "Austria"
+ },
+ {
+  "Airline Name": "Iran Air",
+  "ICAO Designator": "IRA",
+  "Country": "Iran, Islamic Republic of"
+ },
+ {
+  "Airline Name": "Iran Aseman Airlines",
+  "ICAO Designator": "IRC",
+  "Country": "Iran, Islamic Republic of"
+ },
+ {
+  "Airline Name": "Israir",
+  "ICAO Designator": "ISR",
+  "Country": "Israel"
+ },
+ {
+  "Airline Name": "Japan Airlines",
+  "ICAO Designator": "JAL",
+  "Country": "Japan"
+ },
+ {
+  "Airline Name": "Jazeera Airways",
+  "ICAO Designator": "JZR",
+  "Country": "Kuwait"
+ },
+ {
+  "Airline Name": "Jet Airways",
+  "ICAO Designator": "JAI",
+  "Country": "India"
+ },
+ {
+  "Airline Name": "Jet Lite (India) Limited",
+  "Country": "India"
+ },
+ {
+  "Airline Name": "JetBlue",
+  "ICAO Designator": "JBU",
+  "Country": "United States"
+ },
+ {
+  "Airline Name": "Jordan Aviation",
+  "ICAO Designator": "JAV",
+  "Country": "Jordan"
+ },
+ {
+  "Airline Name": "JSC Aircompany Yakutia",
+  "ICAO Designator": "SYL",
+  "Country": "Russian Federation"
+ },
+ {
+  "Airline Name": "JSC Nordavia-RA",
+  "ICAO Designator": "AUL",
+  "Country": "Russian Federation"
+ },
+ {
+  "Airline Name": "Juneyao Airlines",
+  "ICAO Designator": "DKH",
+  "Country": "China (People's Republic of)"
+ },
+ {
+  "Airline Name": "Kenya Airways",
+  "ICAO Designator": "KQA",
+  "Country": "Kenya"
+ },
+ {
+  "Airline Name": "Kish Air",
+  "ICAO Designator": "IRK",
+  "Country": "Iran, Islamic Republic of"
+ },
+ {
+  "Airline Name": "KLM",
+  "ICAO Designator": "KLM",
+  "Country": "Netherlands"
+ },
+ {
+  "Airline Name": "Korean Air",
+  "ICAO Designator": "KAL",
+  "Country": "Korea"
+ },
+ {
+  "Airline Name": "Kuwait Airways",
+  "ICAO Designator": "KAC",
+  "Country": "Kuwait"
+ },
+ {
+  "Airline Name": "LACSA",
+  "ICAO Designator": "LRC",
+  "Country": "Costa Rica"
+ },
+ {
+  "Airline Name": "LAM",
+  "ICAO Designator": "LAM",
+  "Country": "Mozambique"
+ },
+ {
+  "Airline Name": "Lan Airlines",
+  "ICAO Designator": "LAN",
+  "Country": "Chile"
+ },
+ {
+  "Airline Name": "Lan Argentina",
+  "ICAO Designator": "DSM",
+  "Country": "Argentina"
+ },
+ {
+  "Airline Name": "Lan Cargo",
+  "ICAO Designator": "LCO",
+  "Country": "Chile"
+ },
+ {
+  "Airline Name": "Lan Perú",
+  "ICAO Designator": "LPE",
+  "Country": "Peru"
+ },
+ {
+  "Airline Name": "LanEcuador",
+  "ICAO Designator": "LNE",
+  "Country": "Ecuador"
+ },
+ {
+  "Airline Name": "LIAT Airlines",
+  "ICAO Designator": "LIA",
+  "Country": "Antigua and Barbuda"
+ },
+ {
+  "Airline Name": "Libyan Airlines",
+  "ICAO Designator": "LAA",
+  "Country": "Libya"
+ },
+ {
+  "Airline Name": "LLC \"NORD WIND\"",
+  "ICAO Designator": "NWS",
+  "Country": "Russian Federation"
+ },
+ {
+  "Airline Name": "LOT Polish Airlines",
+  "ICAO Designator": "LOT",
+  "Country": "Poland"
+ },
+ {
+  "Airline Name": "Lufthansa",
+  "ICAO Designator": "DLH",
+  "Country": "Germany"
+ },
+ {
+  "Airline Name": "Lufthansa Cargo",
+  "ICAO Designator": "GEC",
+  "Country": "Germany"
+ },
+ {
+  "Airline Name": "Lufthansa CityLine",
+  "ICAO Designator": "CLH",
+  "Country": "Germany"
+ },
+ {
+  "Airline Name": "Luxair",
+  "ICAO Designator": "LGL",
+  "Country": "Luxembourg"
+ },
+ {
+  "Airline Name": "Mahan Air",
+  "ICAO Designator": "IRM",
+  "Country": "Iran, Islamic Republic of"
+ },
+ {
+  "Airline Name": "Malaysia Airlines",
+  "ICAO Designator": "MAS",
+  "Country": "Malaysia"
+ },
+ {
+  "Airline Name": "Malmö Aviation",
+  "ICAO Designator": "SCW",
+  "Country": "Sweden"
+ },
+ {
+  "Airline Name": "Martinair Cargo",
+  "ICAO Designator": "MPH",
+  "Country": "Netherlands"
+ },
+ {
+  "Airline Name": "MAS AIR",
+  "ICAO Designator": "MAA",
+  "Country": "Mexico"
+ },
+ {
+  "Airline Name": "MEA",
+  "ICAO Designator": "MEA",
+  "Country": "Lebanon"
+ },
+ {
+  "Airline Name": "Meridiana fly",
+  "ICAO Designator": "ISS",
+  "Country": "Italy"
+ },
+ {
+  "Airline Name": "MIAT",
+  "ICAO Designator": "MGL",
+  "Country": "Mongolia"
+ },
+ {
+  "Airline Name": "Montenegro Airlines",
+  "ICAO Designator": "MGX",
+  "Country": "Montenegro"
+ },
+ {
+  "Airline Name": "Nesma Airlines",
+  "ICAO Designator": "NMA",
+  "Country": "Egypt"
+ },
+ {
+  "Airline Name": "NIKI",
+  "Country": "Austria"
+ },
+ {
+  "Airline Name": "Nile Air",
+  "ICAO Designator": "NIA",
+  "Country": "Egypt"
+ },
+ {
+  "Airline Name": "Nippon Cargo Airlines (NCA)",
+  "ICAO Designator": "NCA",
+  "Country": "Japan"
+ },
+ {
+  "Airline Name": "Nouvelair",
+  "ICAO Designator": "LBT",
+  "Country": "Tunisia"
+ },
+ {
+  "Airline Name": "Olympic Air",
+  "ICAO Designator": "OAL",
+  "Country": "Greece"
+ },
+ {
+  "Airline Name": "Oman Air",
+  "ICAO Designator": "OAS",
+  "Country": "Oman"
+ },
+ {
+  "Airline Name": "Onur Air",
+  "ICAO Designator": "OHY",
+  "Country": "Turkey"
+ },
+ {
+  "Airline Name": "PAL",
+  "ICAO Designator": "PAL",
+  "Country": "Philippines"
+ },
+ {
+  "Airline Name": "Pegasus Airlines",
+  "ICAO Designator": "PGT",
+  "Country": "Turkey"
+ },
+ {
+  "Airline Name": "PGA-Portugália Airlines",
+  "ICAO Designator": "PGA",
+  "Country": "Portugal"
+ },
+ {
+  "Airline Name": "PIA",
+  "ICAO Designator": "PIA",
+  "Country": "Pakistan"
+ },
+ {
+  "Airline Name": "Precision Air",
+  "ICAO Designator": "PRF",
+  "Country": "Tanzania, United Republic of"
+ },
+ {
+  "Airline Name": "PrivatAir",
+  "ICAO Designator": "PTI",
+  "Country": "Switzerland"
+ },
+ {
+  "Airline Name": "Qantas",
+  "ICAO Designator": "QFA",
+  "Country": "Australia"
+ },
+ {
+  "Airline Name": "Qatar Airways",
+  "ICAO Designator": "QTR",
+  "Country": "Qatar"
+ },
+ {
+  "Airline Name": "Rossiya Airlines",
+  "ICAO Designator": "SDM",
+  "Country": "Russian Federation"
+ },
+ {
+  "Airline Name": "Royal Air Maroc",
+  "ICAO Designator": "RAM",
+  "Country": "Morocco"
+ },
+ {
+  "Airline Name": "Royal Brunei",
+  "ICAO Designator": "RBA",
+  "Country": "Brunei Darussalam"
+ },
+ {
+  "Airline Name": "Royal Jordanian",
+  "ICAO Designator": "RJA",
+  "Country": "Jordan"
+ },
+ {
+  "Airline Name": "SAA",
+  "ICAO Designator": "SAA",
+  "Country": "South Africa"
+ },
+ {
+  "Airline Name": "Safair",
+  "ICAO Designator": "SFR",
+  "Country": "South Africa"
+ },
+ {
+  "Airline Name": "Safi Airways",
+  "ICAO Designator": "SFW",
+  "Country": "Afghanistan"
+ },
+ {
+  "Airline Name": "SAS",
+  "ICAO Designator": "SAS",
+  "Country": "Sweden"
+ },
+ {
+  "Airline Name": "SATA Air Açores",
+  "ICAO Designator": "SAT",
+  "Country": "Portugal"
+ },
+ {
+  "Airline Name": "SATA Internacional",
+  "ICAO Designator": "RZO",
+  "Country": "Portugal"
+ },
+ {
+  "Airline Name": "Saudi Arabian Airlines",
+  "ICAO Designator": "SVA",
+  "Country": "Saudi Arabia"
+ },
+ {
+  "Airline Name": "Shandong Airlines",
+  "ICAO Designator": "CDG",
+  "Country": "China (People's Republic of)"
+ },
+ {
+  "Airline Name": "Shanghai Airlines",
+  "Country": "China (People's Republic of)"
+ },
+ {
+  "Airline Name": "Shenzhen Airlines",
+  "ICAO Designator": "CSZ",
+  "Country": "China (People's Republic of)"
+ },
+ {
+  "Airline Name": "SIA",
+  "ICAO Designator": "SIA",
+  "Country": "Singapore"
+ },
+ {
+  "Airline Name": "SIA Cargo",
+  "ICAO Designator": "SIA",
+  "Country": "Singapore"
+ },
+ {
+  "Airline Name": "Siberia Airlines",
+  "ICAO Designator": "SBI",
+  "Country": "Russian Federation"
+ },
+ {
+  "Airline Name": "Sichuan Airlines",
+  "Country": "China (People's Republic of)"
+ },
+ {
+  "Airline Name": "Silkair",
+  "ICAO Designator": "SLK",
+  "Country": "Singapore"
+ },
+ {
+  "Airline Name": "South African Express Airways",
+  "ICAO Designator": "EXY",
+  "Country": "South Africa"
+ },
+ {
+  "Airline Name": "SriLankan",
+  "ICAO Designator": "ALK",
+  "Country": "Sri Lanka"
+ },
+ {
+  "Airline Name": "Sudan Airways",
+  "ICAO Designator": "SUD",
+  "Country": "Sudan"
+ },
+ {
+  "Airline Name": "SunExpress",
+  "ICAO Designator": "SXS",
+  "Country": "Turkey"
+ },
+ {
+  "Airline Name": "Surinam Airways",
+  "ICAO Designator": "SLM",
+  "Country": "Suriname"
+ },
+ {
+  "Airline Name": "SWISS",
+  "ICAO Designator": "SWR",
+  "Country": "Switzerland"
+ },
+ {
+  "Airline Name": "SYPHAX AIRLINES",
+  "ICAO Designator": "SYA",
+  "Country": "Tunisia"
+ },
+ {
+  "Airline Name": "Syrianair",
+  "ICAO Designator": "SYR",
+  "Country": "Syrian Arab Republic"
+ },
+ {
+  "Airline Name": "TAAG - Angola Airlines",
+  "ICAO Designator": "DTA",
+  "Country": "Angola"
+ },
+ {
+  "Airline Name": "TACA",
+  "ICAO Designator": "TAI",
+  "Country": "El Salvador"
+ },
+ {
+  "Airline Name": "TACA Peru",
+  "ICAO Designator": "TPU",
+  "Country": "Peru"
+ },
+ {
+  "Airline Name": "TACV Cabo Verde Airlines",
+  "ICAO Designator": "TCV",
+  "Country": "Cape Verde"
+ },
+ {
+  "Airline Name": "TAM - Transportes Aéreos del Mercosur Sociedad Anónima",
+  "ICAO Designator": "LAP",
+  "Country": "Paraguay"
+ },
+ {
+  "Airline Name": "TAM Linhas Aéreas",
+  "ICAO Designator": "TAM",
+  "Country": "Brazil"
+ },
+ {
+  "Airline Name": "TAME - Linea Aérea del Ecuador",
+  "ICAO Designator": "TAE",
+  "Country": "Ecuador"
+ },
+ {
+  "Airline Name": "TAP Portugal",
+  "ICAO Designator": "TAP",
+  "Country": "Portugal"
+ },
+ {
+  "Airline Name": "TAROM",
+  "ICAO Designator": "ROT",
+  "Country": "Romania"
+ },
+ {
+  "Airline Name": "Tassili Airlines",
+  "Country": "Algeria"
+ },
+ {
+  "Airline Name": "Thai Airways International",
+  "ICAO Designator": "THA",
+  "Country": "Thailand"
+ },
+ {
+  "Airline Name": "THY - Turkish Airlines",
+  "ICAO Designator": "THY",
+  "Country": "Turkey"
+ },
+ {
+  "Airline Name": "Tianjin Airlines",
+  "ICAO Designator": "GCR",
+  "Country": "China (People's Republic of)"
+ },
+ {
+  "Airline Name": "TNT Airways S.A.",
+  "ICAO Designator": "TAY",
+  "Country": "Belgium"
+ },
+ {
+  "Airline Name": "Transaero",
+  "ICAO Designator": "TSO",
+  "Country": "Russian Federation"
+ },
+ {
+  "Airline Name": "TransAsia Airways",
+  "ICAO Designator": "TNA",
+  "Country": "Chinese Taipei"
+ },
+ {
+  "Airline Name": "TUIfly",
+  "ICAO Designator": "TUI",
+  "Country": "Germany"
+ },
+ {
+  "Airline Name": "Tunisair",
+  "ICAO Designator": "TAR",
+  "Country": "Tunisia"
+ },
+ {
+  "Airline Name": "Ukraine International Airlines",
+  "ICAO Designator": "AUI",
+  "Country": "Ukraine"
+ },
+ {
+  "Airline Name": "United Airlines",
+  "ICAO Designator": "UAL",
+  "Country": "United States"
+ },
+ {
+  "Airline Name": "UPS Airlines",
+  "ICAO Designator": "UPS",
+  "Country": "United States"
+ },
+ {
+  "Airline Name": "US Airways",
+  "ICAO Designator": "USA",
+  "Country": "United States"
+ },
+ {
+  "Airline Name": "UTair",
+  "ICAO Designator": "UTA",
+  "Country": "Russian Federation"
+ },
+ {
+  "Airline Name": "Uzbekistan Airways",
+  "ICAO Designator": "UZB",
+  "Country": "Uzbekistan"
+ },
+ {
+  "Airline Name": "Vietnam Airlines",
+  "ICAO Designator": "HVN",
+  "Country": "Vietnam"
+ },
+ {
+  "Airline Name": "Virgin Atlantic",
+  "ICAO Designator": "VIR",
+  "Country": "United Kingdom"
+ },
+ {
+  "Airline Name": "Virgin Australia",
+  "ICAO Designator": "VAU",
+  "Country": "Australia"
+ },
+ {
+  "Airline Name": "VLM Airlines",
+  "ICAO Designator": "VLM",
+  "Country": "Belgium"
+ },
+ {
+  "Airline Name": "Volaris",
+  "ICAO Designator": "VOI",
+  "Country": "Mexico"
+ },
+ {
+  "Airline Name": "Volga-Dnepr Airlines",
+  "ICAO Designator": "VDA",
+  "Country": "Russian Federation"
+ },
+ {
+  "Airline Name": "VRG Linhas Aéreas S.A. - Grupo GOL",
+  "ICAO Designator": "GLO",
+  "Country": "Brazil"
+ },
+ {
+  "Airline Name": "White coloured by you",
+  "ICAO Designator": "WHT",
+  "Country": "Portugal"
+ },
+ {
+  "Airline Name": "Wideroe",
+  "ICAO Designator": "WIF",
+  "Country": "Norway"
+ },
+ {
+  "Airline Name": "Xiamen Airlines",
+  "ICAO Designator": "CXA",
+  "Country": "China (People's Republic of)"
+ },
+ {
+  "Airline Name": "Yemenia",
+  "ICAO Designator": "IYE",
+  "Country": "Yemen"
+ },
+ {
+  "Airline Name": "Silk Way Airlines",
+  "ICAO Designator": "AZQ",
+  "Country": "Azerbaijan"
+ },
+ {
+  "Airline Name": "Silk Way West Airlines Limited",
+  "Country": "Azerbaijan"
+ }
+]
+}
