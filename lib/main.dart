@@ -156,7 +156,7 @@ class _AirplanesMapState extends State<AirplanesMap> {
                   return Transform.rotate(
                     angle: heading * (3.14159 / 180),
                     child: Tooltip(
-                      message: 'Vol numéro : $callsign\nVelocity: ${velocity?.toStringAsFixed(2) ?? 'N/A'} m/s\nAltitude : $altitude m',
+                      message: 'Vol numéro : $callsign\nVitesse : ${velocity?.toStringAsFixed(2) ?? 'N/A'} m/s\nAltitude : $altitude m',
                       child: Icon(
                         Icons.airplanemode_active,
                         color: Color(0xFF002157),
@@ -273,13 +273,25 @@ class _AirplanesMapState extends State<AirplanesMap> {
               SizedBox(height: 24),
               TextField(
                 decoration: InputDecoration(
+                  labelText: 'Origin',
+                  labelStyle: TextStyle(color: Color(0xFF002157)),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                    borderSide: BorderSide(color: Color(0xFF002157)),
+                  ),
+                  suffixIcon: Icon(Icons.flight_takeoff),
+                ),
+              ),
+              SizedBox(height: 24),
+              TextField(
+                decoration: InputDecoration(
                   labelText: 'Destination',
                   labelStyle: TextStyle(color: Color(0xFF002157)),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(8.0)),
                     borderSide: BorderSide(color: Color(0xFF002157)),
                   ),
-                  suffixIcon: Icon(Icons.location_on),
+                  suffixIcon: Icon(Icons.flight_land),
                 ),
               ),
             ],
