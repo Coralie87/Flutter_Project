@@ -25,7 +25,6 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-
       home: Scaffold(
         backgroundColor: Color(0xFF002157), // Set the background color here
         appBar: AppBar(
@@ -33,27 +32,22 @@ class MyApp extends StatelessWidget {
           title: Row(
             mainAxisAlignment: MainAxisAlignment.start, // Align items to the start
             children: [
-              // Leading Menu Button
               IconButton(
                 icon: Icon(Icons.menu),
-                onPressed: () {
-                  // Handle menu action
-                },
+                onPressed: () {},
               ),
-              // Add the logo next to the menu button
               Container(
-                margin: EdgeInsets.only(left: 8.0, right: 8.0), // Add margin for spacing
+                margin: EdgeInsets.only(left: 8.0, right: 8.0),
                 child: SvgPicture.asset(
                   'assets/Air_France_Logo.svg', // Path to your SVG logo
-                  fit: BoxFit.contain, // Adjust the image fitting
-                  height: 20, // Set the height of the logo
+                  fit: BoxFit.contain,
+                  height: 20,
                 ),
               ),
-              // Title text
               Spacer(),
               Text(
                 'Air France Airplanes Map',
-                style: TextStyle(fontSize: 20), // Adjust title text size if needed
+                style: TextStyle(fontSize: 20),
               ),
               Spacer(),
             ],
@@ -63,15 +57,11 @@ class MyApp extends StatelessWidget {
           actions: [
             IconButton(
               icon: Icon(Icons.search),
-              onPressed: () {
-                // Handle search action
-              },
+              onPressed: () {},
             ),
             IconButton(
               icon: Icon(Icons.settings),
-              onPressed: () {
-                // Handle settings action
-              },
+              onPressed: () {},
             ),
           ],
         ),
@@ -90,9 +80,12 @@ class _AirplanesMapState extends State<AirplanesMap> {
   List<Marker> airplaneMarkers = [];
   double zoomLevel = 2.0;
   Timer? timer;
-  Map<String, bool> hoverStates = {}; // Store hover states
+  final MapController mapController = MapController();
+  TextEditingController flightSearchController = TextEditingController();
 
-  // Replace with your OpenSky username and password
+  Map<String, LatLng> flightPositions = {}; // Mapping flight numbers to positions
+  Map<String, Map<String, dynamic>> flightInfo = {}; // Mapping flight numbers to additional info
+
   final String username = 'AzizPistol';
   final String password = 'Ce@Pt37sgNdSiWu';
 
@@ -106,39 +99,34 @@ class _AirplanesMapState extends State<AirplanesMap> {
   @override
   void dispose() {
     timer?.cancel();
+    flightSearchController.dispose();
     super.dispose();
   }
 
   double _calculateIconSize(double zoomLevel, double? altitude) {
-    // Adjust size based on zoom level
     double baseSize = zoomLevel * 3;
-
-    // Optionally adjust based on altitude
     if (altitude != null) {
-      baseSize = baseSize * (1 + (altitude / 10000)); // Tweak the divisor to control sensitivity
+      baseSize = baseSize * (1 + (altitude / 10000));
     }
-
-    // Clamp the size to prevent it from getting too small or too large
     return baseSize.clamp(10.0, 80.0);
   }
 
-  // Function to fetch airplane data with Basic Authentication
   Future<void> fetchAirplanes() async {
     String url = 'https://opensky-network.org/api/states/all';
-
-    // Encode the username and password as Base64 for Basic Authentication
     String basicAuth = 'Basic ' + base64Encode(utf8.encode('$username:$password'));
 
     final response = await http.get(
       Uri.parse(url),
       headers: <String, String>{
-        'Authorization': basicAuth,  // Add the Authorization header
+        'Authorization': basicAuth,
       },
     );
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       List<Marker> markers = [];
+      flightPositions.clear();
+      flightInfo.clear();
 
       for (var airplane in data['states']) {
         double? lat = airplane[6];
@@ -149,37 +137,30 @@ class _AirplanesMapState extends State<AirplanesMap> {
         double? velocity = airplane[9];
 
         if (callsign != null && callsign.startsWith("AFR")) {
+          callsign = callsign.trim().toUpperCase();
           if (lat != null && lng != null && heading != null) {
+            LatLng position = LatLng(lat, lng);
+            flightPositions[callsign] = position;
+            flightInfo[callsign] = {
+              'altitude': altitude,
+              'velocity': velocity,
+              'heading': heading,
+            };
+
             markers.add(
               Marker(
                 width: 40.0,
                 height: 40.0,
-                point: LatLng(lat, lng),
+                point: position,
                 builder: (ctx) {
-                  bool isHovered = hoverStates[callsign] ?? false; // Check hover state
-                  Color markerColor = isHovered ? Color(0xFF931116) : Color(0xFF002157); // Change color on hover
-
-                  return MouseRegion(
-                    onEnter: (_) {
-                      setState(() {
-                        hoverStates[callsign] = true; // Set hover state to true
-                      });
-                    },
-                    onExit: (_) {
-                      setState(() {
-                        hoverStates[callsign] = false; // Set hover state to false
-                      });
-                    },
-                    child: Transform.rotate(
-                      angle: heading * (3.14159 / 180), // Rotate based on heading (convert degrees to radians)
-                      child: Tooltip(
-                        message: 'Vol numéro : $callsign\nVelocity: ${velocity?.toStringAsFixed(2) ?? 'N/A'} m/s \nAltitude : $altitude m',
-                        child: IconButton(
-                          icon: Icon(Icons.airplanemode_active, color: markerColor, size: _calculateIconSize(zoomLevel, altitude)),
-                          onPressed: () {
-                            // Handle on press if needed
-                          },
-                        ),
+                  return Transform.rotate(
+                    angle: heading * (3.14159 / 180),
+                    child: Tooltip(
+                      message: 'Vol numéro : $callsign\nVelocity: ${velocity?.toStringAsFixed(2) ?? 'N/A'} m/s\nAltitude : $altitude m',
+                      child: Icon(
+                        Icons.airplanemode_active,
+                        color: Color(0xFF002157),
+                        size: _calculateIconSize(zoomLevel, altitude),
                       ),
                     ),
                   );
@@ -195,6 +176,57 @@ class _AirplanesMapState extends State<AirplanesMap> {
       });
     } else {
       throw Exception('Failed to load airplanes');
+    }
+  }
+
+  void focusOnFlight(String flightNumber) {
+    String searchKey = flightNumber.trim().toUpperCase();
+    LatLng? position = flightPositions[searchKey];
+    var info = flightInfo[searchKey];
+
+    if (position != null && info != null) {
+      double targetZoom = 8.0; // Niveau de zoom cible
+      double step = 0.2; // Pas de zoom progressif
+      double currentZoom = mapController.zoom;
+
+      // Crée un timer pour zoomer progressivement
+      Timer.periodic(Duration(milliseconds: 40), (timer) {
+        if (currentZoom < targetZoom) {
+          currentZoom += step; // Augmente le zoom par le pas défini
+          mapController.move(position, currentZoom); // Déplace la carte avec le nouveau niveau de zoom
+        } else {
+          // Arrête le zoom progressif une fois le niveau cible atteint
+          timer.cancel();
+
+          // Affiche les infos du vol
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text("Infos du vol $flightNumber"),
+                content: Text(
+                  'Vol numéro : $flightNumber\n'
+                      'Vitesse : ${info['velocity']?.toStringAsFixed(2) ?? 'N/A'} m/s\n'
+                      'Altitude : ${info['altitude']} m',
+                ),
+                actions: [
+                  TextButton(
+                    child: Text("Fermer"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        }
+      });
+    } else {
+      // Affiche un message d'erreur si le vol n'est pas trouvé
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Vol $flightNumber non trouvé')),
+      );
     }
   }
 
@@ -218,8 +250,8 @@ class _AirplanesMapState extends State<AirplanesMap> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Flight Search Text Field
               TextField(
+                controller: flightSearchController,
                 decoration: InputDecoration(
                   labelText: 'Flight Search',
                   labelStyle: TextStyle(color: Color(0xFF002157)),
@@ -227,12 +259,18 @@ class _AirplanesMapState extends State<AirplanesMap> {
                     borderRadius: BorderRadius.all(Radius.circular(8.0)),
                     borderSide: BorderSide(color: Color(0xFF002157)),
                   ),
-                  suffixIcon: Icon(Icons.search),
+                  suffixIcon: IconButton(
+                    icon: Icon(Icons.search),
+                    onPressed: () {
+                      focusOnFlight(flightSearchController.text);
+                    },
+                  ),
                 ),
+                onSubmitted: (text) {
+                  focusOnFlight(text);
+                },
               ),
               SizedBox(height: 24),
-
-              // Destination Text Field
               TextField(
                 decoration: InputDecoration(
                   labelText: 'Destination',
@@ -251,6 +289,7 @@ class _AirplanesMapState extends State<AirplanesMap> {
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: FlutterMap(
+              mapController: mapController,
               options: MapOptions(
                 center: LatLng(0, 0),
                 zoom: zoomLevel,
