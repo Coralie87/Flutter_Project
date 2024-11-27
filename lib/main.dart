@@ -75,6 +75,7 @@ class _AirplanesMapState extends State<AirplanesMap> {
   List<Marker> airplaneMarkers = [];
   double zoomLevel = 2.0;
   Timer? timer;
+  Map<String, String> locationCache = {}; // Cache pour stocker les géolocalisations
 
   @override
   void initState() {
@@ -101,17 +102,16 @@ class _AirplanesMapState extends State<AirplanesMap> {
         'Basic ' + base64Encode(utf8.encode('$openSkyUsername:$openSkyPassword'));
 
     try {
-      final response = await http.get(
-        Uri.parse(urlOpenSky),
-        headers: {'Authorization': basicAuth},
-      );
+      final response = await http
+          .get(Uri.parse(urlOpenSky), headers: {'Authorization': basicAuth})
+          .timeout(Duration(seconds: 10)); // Timeout ajouté
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         List<Marker> markers = [];
 
         for (var airplane in data['states']) {
-          String? icao24 = airplane[0]?.toLowerCase(); // Convertir en minuscule
+          String? icao24 = airplane[0]?.toLowerCase();
           String? callsign = airplane[1];
           double? lat = airplane[6];
           double? lng = airplane[5];
@@ -146,6 +146,8 @@ class _AirplanesMapState extends State<AirplanesMap> {
       } else {
         print("Failed to fetch airplanes: ${response.body}");
       }
+    } on TimeoutException catch (_) {
+      print("La requête OpenSky a expiré.");
     } catch (e) {
       print("Error fetching airplanes: $e");
     }
@@ -157,10 +159,9 @@ class _AirplanesMapState extends State<AirplanesMap> {
         'Basic ' + base64Encode(utf8.encode('$openSkyUsername:$openSkyPassword'));
 
     try {
-      final response = await http.get(
-        Uri.parse(url),
-        headers: {'Authorization': basicAuth},
-      );
+      final response = await http
+          .get(Uri.parse(url), headers: {'Authorization': basicAuth})
+          .timeout(Duration(seconds: 10)); // Timeout ajouté
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -173,9 +174,9 @@ class _AirplanesMapState extends State<AirplanesMap> {
             'arrival': {'lat': arrival[1], 'lng': arrival[2]},
           };
         }
-      } else {
-        print("Failed to fetch flight positions: ${response.body}");
       }
+    } on TimeoutException catch (_) {
+      print("La requête pour les positions a expiré.");
     } catch (e) {
       print("Error fetching flight positions: $e");
     }
@@ -186,12 +187,14 @@ class _AirplanesMapState extends State<AirplanesMap> {
   Future<void> fetchFlightDetails(BuildContext context, String icao24) async {
     final positions = await getFlightPositions(icao24);
 
-    if (positions.isEmpty) {
+    if (positions.isEmpty ||
+        positions['departure'] == null ||
+        positions['arrival'] == null) {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
           title: Text('Détails de l\'avion'),
-          content: Text('Aucune donnée trouvée pour cet avion.'),
+          content: Text('Les informations de départ ou d\'arrivée ne sont pas disponibles.'),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
@@ -236,12 +239,17 @@ class _AirplanesMapState extends State<AirplanesMap> {
   }
 
   Future<String> getLocationDetails(double lat, double lng) async {
+    String key = "$lat,$lng";
+
+    if (locationCache.containsKey(key)) {
+      return locationCache[key]!;
+    }
+
     final url =
         'https://api.opencagedata.com/geocode/v1/json?q=$lat+$lng&key=$openCageApiKey';
 
     try {
-      final response = await http.get(Uri.parse(url));
-
+      final response = await http.get(Uri.parse(url)).timeout(Duration(seconds: 10));
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         if (data['results'] != null && data['results'].isNotEmpty) {
@@ -250,110 +258,44 @@ class _AirplanesMapState extends State<AirplanesMap> {
               components['town'] ??
               components['village'] ??
               components['hamlet'];
-          final road = components['road'];
-          final state = components['state'] ?? components['country'];
+          final country = components['country'];
 
-          if (city != null) {
-            return city;
-          } else if (road != null && state != null) {
-            return '$road, $state';
-          } else if (state != null) {
-            return state;
-          } else {
-            return "Inconnu";
+          if (city != null && country != null) {
+            String location = '$city, $country';
+            locationCache[key] = location; // Ajout au cache
+            return location;
           }
-        } else {
-          return "Inconnu";
         }
-      } else {
-        return "Erreur";
       }
+    } on TimeoutException catch (_) {
+      print("La requête OpenCageData a expiré.");
     } catch (e) {
-      return "Erreur";
+      print("Erreur lors de la récupération des détails : $e");
     }
+
+    return "Inconnu";
   }
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Container(
-          width: 250,
-          padding: EdgeInsets.all(24.0),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.3),
-                spreadRadius: 2,
-                blurRadius: 5,
-              ),
-            ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              TextField(
-                decoration: InputDecoration(
-                  labelText: 'Recherche vol',
-                  labelStyle: TextStyle(color: Color(0xFF002157)),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                    borderSide: BorderSide(color: Color(0xFF002157)),
-                  ),
-                  suffixIcon: Icon(Icons.search),
-                ),
-              ),
-              SizedBox(height: 24),
-
-              // Origin Field
-              TextField(
-                decoration: InputDecoration(
-                  labelText: 'Origin',
-                  labelStyle: TextStyle(color: Color(0xFF002157)),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                    borderSide: BorderSide(color: Color(0xFF002157)),
-                  ),
-                  suffixIcon: Icon(Icons.flight_takeoff),
-                ),
-              ),
-              SizedBox(height: 24),
-
-              // Destination Field
-              TextField(
-                decoration: InputDecoration(
-                  labelText: 'Destination',
-                  labelStyle: TextStyle(color: Color(0xFF002157)),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                    borderSide: BorderSide(color: Color(0xFF002157)),
-                  ),
-                  suffixIcon: Icon(Icons.flight_land),
-                ),
-              ),
-              SizedBox(height: 24),
-            ],
-          ),
-        ),
         Flexible(
-          child: Container(
-            decoration: BoxDecoration(
-              border: Border.all(color: Color(0xFF002157), width: 4),
+          child: FlutterMap(
+            options: MapOptions(
+              center: LatLng(48.8566, 2.3522),
+              zoom: zoomLevel,
+              onTap: (tapPosition, point) {
+                print("Carte cliquée à : $point");
+              },
             ),
-            child: FlutterMap(
-              options: MapOptions(
-                center: LatLng(48.8566, 2.3522),
-                zoom: zoomLevel,
+            children: [
+              TileLayer(
+                urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                subdomains: ['a', 'b', 'c'],
               ),
-              children: [
-                TileLayer(
-                  urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                  subdomains: ['a', 'b', 'c'],
-                ),
-                MarkerLayer(markers: airplaneMarkers),
-              ],
-            ),
+              MarkerLayer(markers: airplaneMarkers),
+            ],
           ),
         ),
       ],

@@ -34,7 +34,8 @@ dependencies:
   flutter_map: ^4.0.0
   latlong2: ^0.8.1
   multi_select_flutter: ^4.0.0
-  dropdown_search: ^6.0.1 # Check for the latest version
+  dropdown_search: ^6.0.1
+  syncfusion_flutter_maps: ^20.3.50
 
 
   # The following adds the Cupertino Icons font to your application.
