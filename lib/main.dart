@@ -1,10 +1,10 @@
-import 'dart:async'; // Import for using Timer
+import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:latlong2/latlong.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'package:flutter_svg/flutter_svg.dart'; // Import the flutter_svg package
+import 'package:latlong2/latlong.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 void main() {
   runApp(MyApp());
@@ -20,49 +20,40 @@ class MyApp extends StatelessWidget {
         colorSchemeSeed: Colors.blue,
         textTheme: TextTheme(
           titleLarge: TextStyle(
-            fontSize: 22.0, // Adjust according to Material 3 guidelines
+            fontSize: 22.0,
             fontWeight: FontWeight.w600,
           ),
         ),
       ),
       home: Scaffold(
-        backgroundColor: Color(0xFF002157), // Set the background color here
+        backgroundColor: Color(0xFF002157),
         appBar: AppBar(
           centerTitle: true,
           title: Row(
-            mainAxisAlignment: MainAxisAlignment.start, // Align items to the start
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               IconButton(
                 icon: Icon(Icons.menu),
                 onPressed: () {},
               ),
               Container(
-                margin: EdgeInsets.only(left: 8.0, right: 8.0),
+                margin: EdgeInsets.symmetric(horizontal: 8.0),
                 child: SvgPicture.asset(
-                  'assets/Air_France_Logo.svg', // Path to your SVG logo
+                  'assets/Air_France_Logo.svg',
                   fit: BoxFit.contain,
                   height: 20,
                 ),
               ),
               Spacer(),
-              Text(
-                'Air France Airplanes Map',
-                style: TextStyle(fontSize: 20),
-              ),
+              Text('Air France Airplanes Map', style: TextStyle(fontSize: 20)),
               Spacer(),
             ],
           ),
           elevation: 0,
           toolbarHeight: 80,
           actions: [
-            IconButton(
-              icon: Icon(Icons.search),
-              onPressed: () {},
-            ),
-            IconButton(
-              icon: Icon(Icons.settings),
-              onPressed: () {},
-            ),
+            IconButton(icon: Icon(Icons.search), onPressed: () {}),
+            IconButton(icon: Icon(Icons.settings), onPressed: () {}),
           ],
         ),
         body: AirplanesMap(),
@@ -77,17 +68,21 @@ class AirplanesMap extends StatefulWidget {
 }
 
 class _AirplanesMapState extends State<AirplanesMap> {
+  final String openSkyUsername = 'luap';
+  final String openSkyPassword = 'Luapk989#';
+  final String openCageApiKey = '410626e2ecdb40ecad917ea98f71a8be';
+
   List<Marker> airplaneMarkers = [];
   double zoomLevel = 2.0;
   Timer? timer;
+  Map<String, String> locationCache = {}; // Cache pour stocker les géolocalisations
+
   final MapController mapController = MapController();
+  Map<String, LatLng> flightPositions = {};
+  Map<String, Map<String, dynamic>> flightInfo = {};
   TextEditingController flightSearchController = TextEditingController();
-
-  Map<String, LatLng> flightPositions = {}; // Mapping flight numbers to positions
-  Map<String, Map<String, dynamic>> flightInfo = {}; // Mapping flight numbers to additional info
-
-  final String username = 'AzizPistol';
-  final String password = 'Ce@Pt37sgNdSiWu';
+  TextEditingController originController = TextEditingController();
+  TextEditingController destinationController = TextEditingController();
 
   @override
   void initState() {
@@ -100,63 +95,64 @@ class _AirplanesMapState extends State<AirplanesMap> {
   void dispose() {
     timer?.cancel();
     flightSearchController.dispose();
+    originController.dispose();
+    destinationController.dispose();
     super.dispose();
   }
 
   double _calculateIconSize(double zoomLevel, double? altitude) {
-    double baseSize = zoomLevel * 3;
-    if (altitude != null) {
-      baseSize = baseSize * (1 + (altitude / 10000));
-    }
-    return baseSize.clamp(10.0, 80.0);
+    double baseSize = 10 + (zoomLevel * 2);
+    if (altitude != null) baseSize += altitude / 10000;
+    return baseSize.clamp(8.0, 30.0);
   }
 
   Future<void> fetchAirplanes() async {
-    String url = 'https://opensky-network.org/api/states/all';
-    String basicAuth = 'Basic ' + base64Encode(utf8.encode('$username:$password'));
+    final urlOpenSky = 'https://opensky-network.org/api/states/all';
+    String basicAuth =
+        'Basic ' + base64Encode(utf8.encode('$openSkyUsername:$openSkyPassword'));
 
-    final response = await http.get(
-      Uri.parse(url),
-      headers: <String, String>{
-        'Authorization': basicAuth,
-      },
-    );
+    try {
+      final response = await http
+          .get(Uri.parse(urlOpenSky), headers: {'Authorization': basicAuth})
+          .timeout(Duration(seconds: 10)); // Timeout ajouté
 
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      List<Marker> markers = [];
-      flightPositions.clear();
-      flightInfo.clear();
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        List<Marker> markers = [];
+        flightPositions.clear();
+        flightInfo.clear();
 
-      for (var airplane in data['states']) {
-        double? lat = airplane[6];
-        double? lng = airplane[5];
-        String? callsign = airplane[1];
-        double? heading = airplane[10];
-        double? altitude = airplane[13];
-        double? velocity = airplane[9];
+        for (var airplane in data['states']) {
+          String? icao24 = airplane[0]?.toLowerCase(); // Identifiant unique
+          String? callsign = airplane[1]?.trim().toUpperCase(); // Numéro de vol
+          double? lat = airplane[6];
+          double? lng = airplane[5];
+          double? heading = airplane[10];
+          double? altitude = airplane[13];
+          double? velocity = airplane[9];
 
-        if (callsign != null && callsign.startsWith("AFR")) {
-          callsign = callsign.trim().toUpperCase();
-          if (lat != null && lng != null && heading != null) {
-            LatLng position = LatLng(lat, lng);
+          if (callsign != null && callsign.startsWith("AFR") && icao24 != null) {
+            LatLng position = LatLng(lat ?? 0, lng ?? 0);
             flightPositions[callsign] = position;
             flightInfo[callsign] = {
               'altitude': altitude,
               'velocity': velocity,
               'heading': heading,
+              'icao24': icao24,
             };
 
+            // Ajouter le marker avec un Tooltip
             markers.add(
               Marker(
-                width: 40.0,
-                height: 40.0,
+                width: 60.0,
+                height: 60.0,
                 point: position,
                 builder: (ctx) {
                   return Transform.rotate(
-                    angle: heading * (3.14159 / 180),
+                    angle: heading != null ? heading * (3.14159 / 180) : 0.0,
                     child: Tooltip(
-                      message: 'Vol numéro : $callsign\nVitesse : ${velocity?.toStringAsFixed(2) ?? 'N/A'} m/s\nAltitude : $altitude m',
+                      message:
+                      'Vol numéro : $callsign\nVitesse : ${velocity?.toStringAsFixed(2) ?? 'N/A'} m/s\nAltitude : $altitude m',
                       child: Icon(
                         Icons.airplanemode_active,
                         color: Color(0xFF002157),
@@ -169,17 +165,21 @@ class _AirplanesMapState extends State<AirplanesMap> {
             );
           }
         }
-      }
 
-      setState(() {
-        airplaneMarkers = markers;
-      });
-    } else {
-      throw Exception('Failed to load airplanes');
+        setState(() {
+          airplaneMarkers = markers;
+        });
+      } else {
+        print("Failed to fetch airplanes: ${response.body}");
+      }
+    } on TimeoutException catch (_) {
+      print("La requête OpenSky a expiré.");
+    } catch (e) {
+      print("Error fetching airplanes: $e");
     }
   }
 
-  void focusOnFlight(String flightNumber) {
+  Future<void> focusOnFlight(String flightNumber) async {
     String searchKey = flightNumber.trim().toUpperCase();
     LatLng? position = flightPositions[searchKey];
     var info = flightInfo[searchKey];
@@ -189,25 +189,41 @@ class _AirplanesMapState extends State<AirplanesMap> {
       double step = 0.2; // Pas de zoom progressif
       double currentZoom = mapController.zoom;
 
-      // Crée un timer pour zoomer progressivement
-      Timer.periodic(Duration(milliseconds: 40), (timer) {
-        if (currentZoom < targetZoom) {
-          currentZoom += step; // Augmente le zoom par le pas défini
-          mapController.move(position, currentZoom); // Déplace la carte avec le nouveau niveau de zoom
-        } else {
-          // Arrête le zoom progressif une fois le niveau cible atteint
-          timer.cancel();
+      // Récupérer les détails via l'API OpenCage
+      final positions = await getFlightPositions(info['icao24']);
+      final departureLocation = await getLocationDetails(
+        positions['departure']['lat'],
+        positions['departure']['lng'],
+      );
+      final arrivalLocation = await getLocationDetails(
+        positions['arrival']['lat'],
+        positions['arrival']['lng'],
+      );
 
-          // Affiche les infos du vol
+      // Démarrer un zoom progressif
+      Timer.periodic(Duration(milliseconds: 50), (timer) {
+        if (currentZoom < targetZoom) {
+          currentZoom += step; // Augmenter le niveau de zoom
+          mapController.move(position, currentZoom); // Centrer sur l'avion
+        } else {
+          timer.cancel(); // Arrêter une fois le zoom cible atteint
+
+          // Afficher les détails une fois le zoom terminé
           showDialog(
             context: context,
             builder: (BuildContext context) {
               return AlertDialog(
                 title: Text("Infos du vol $flightNumber"),
-                content: Text(
-                  'Vol numéro : $flightNumber\n'
-                      'Vitesse : ${info['velocity']?.toStringAsFixed(2) ?? 'N/A'} m/s\n'
-                      'Altitude : ${info['altitude']} m',
+                content: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text('Numéro : $flightNumber'),
+                    Text('Vitesse : ${info['velocity']?.toStringAsFixed(2) ?? 'N/A'} m/s'),
+                    Text('Altitude : ${info['altitude']} m'),
+                    Text('Départ : $departureLocation'),
+                    Text('Arrivée : $arrivalLocation'),
+                  ],
                 ),
                 actions: [
                   TextButton(
@@ -223,12 +239,14 @@ class _AirplanesMapState extends State<AirplanesMap> {
         }
       });
     } else {
-      // Affiche un message d'erreur si le vol n'est pas trouvé
+      // Afficher une notification si le vol est introuvable
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Vol $flightNumber non trouvé')),
       );
     }
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -325,5 +343,134 @@ class _AirplanesMapState extends State<AirplanesMap> {
         ),
       ],
     );
+  }
+
+  Future<Map<String, dynamic>> getFlightPositions(String icao24) async {
+    final url = 'https://opensky-network.org/api/tracks/all?icao24=$icao24&time=0';
+    String basicAuth =
+        'Basic ' + base64Encode(utf8.encode('$openSkyUsername:$openSkyPassword'));
+
+    try {
+      final response = await http
+          .get(Uri.parse(url), headers: {'Authorization': basicAuth})
+          .timeout(Duration(seconds: 10)); // Timeout ajouté
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data['path'] != null && data['path'].isNotEmpty) {
+          final departure = data['path'].first;
+          final arrival = data['path'].last;
+
+          return {
+            'departure': {'lat': departure[1], 'lng': departure[2]},
+            'arrival': {'lat': arrival[1], 'lng': arrival[2]},
+          };
+        }
+      }
+    } on TimeoutException catch (_) {
+      print("La requête pour les positions a expiré.");
+    } catch (e) {
+      print("Error fetching flight positions: $e");
+    }
+
+    return {};
+  }
+
+
+
+  Future<void> fetchFlightDetails(BuildContext context, String icao24) async {
+    final positions = await getFlightPositions(icao24);
+
+    if (positions.isEmpty ||
+        positions['departure'] == null ||
+        positions['arrival'] == null) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Détails de l\'avion'),
+          content: Text('Les informations de départ ou d\'arrivée ne sont pas disponibles.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('Fermer'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
+    // Appels OpenCage
+    final departureLocation = await getLocationDetails(
+      positions['departure']['lat'],
+      positions['departure']['lng'],
+    );
+    final arrivalLocation = await getLocationDetails(
+      positions['arrival']['lat'],
+      positions['arrival']['lng'],
+    );
+
+    // Affichage
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Détails de l\'avion'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('ICAO24: $icao24'),
+            Text('Lieu de départ : $departureLocation'),
+            Text('Lieu d\'arrivée : $arrivalLocation'),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text('Fermer'),
+          ),
+        ],
+      ),
+    );
+  }
+
+
+
+  Future<String> getLocationDetails(double lat, double lng) async {
+    String key = "$lat,$lng";
+
+    if (locationCache.containsKey(key)) {
+      return locationCache[key]!;
+    }
+
+    final url =
+        'https://api.opencagedata.com/geocode/v1/json?q=$lat+$lng&key=$openCageApiKey';
+
+    try {
+      final response = await http.get(Uri.parse(url)).timeout(Duration(seconds: 10));
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data['results'] != null && data['results'].isNotEmpty) {
+          final components = data['results'][0]['components'];
+          final city = components['city'] ??
+              components['town'] ??
+              components['village'] ??
+              components['hamlet'];
+          final country = components['country'];
+
+          if (city != null && country != null) {
+            String location = '$city, $country';
+            locationCache[key] = location; // Ajout au cache
+            return location;
+          }
+        }
+      }
+    } on TimeoutException catch (_) {
+      print("La requête OpenCageData a expiré.");
+    } catch (e) {
+      print("Erreur lors de la récupération des détails : $e");
+    }
+
+    return "Inconnu";
   }
 }
