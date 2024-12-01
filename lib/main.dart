@@ -152,7 +152,7 @@ class _AirplanesMapState extends State<AirplanesMap> {
                     angle: heading != null ? heading * (3.14159 / 180) : 0.0,
                     child: Tooltip(
                       message:
-                      'Vol numéro : $callsign\nVitesse : ${velocity?.toStringAsFixed(2) ?? 'N/A'} m/s\nAltitude : $altitude m',
+                      'Vol numéro : $callsign',
                       child: Icon(
                         Icons.airplanemode_active,
                         color: Color(0xFF002157),
