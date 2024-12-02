@@ -84,6 +84,78 @@ class _AirplanesMapState extends State<AirplanesMap> {
   TextEditingController originController = TextEditingController();
   TextEditingController destinationController = TextEditingController();
 
+  // Placez la méthode `filterByCity` ici
+  void filterByCity(String cityName, bool isOrigin) async {
+    if (cityName.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Veuillez entrer une ville valide.")),
+      );
+      return;
+    }
+
+    Map<String, String> filteredFlights = {};
+
+    for (var callsign in flightInfo.keys) {
+      final info = flightInfo[callsign];
+      if (info == null) continue;
+
+      final icao24 = info['icao24'];
+      if (icao24 == null) continue;
+
+      final positions = await getFlightPositions(icao24);
+      if (positions.isEmpty) continue;
+
+      final location = await getLocationDetails(
+        positions[isOrigin ? 'departure' : 'arrival']['lat'],
+        positions[isOrigin ? 'departure' : 'arrival']['lng'],
+      );
+
+      if (location.toLowerCase().contains(cityName.toLowerCase())) {
+        filteredFlights[callsign] = location;
+      }
+    }
+
+    if (filteredFlights.isNotEmpty) {
+      List<Marker> markers = [];
+
+      for (var callsign in filteredFlights.keys) {
+        final position = flightPositions[callsign];
+        final info = flightInfo[callsign];
+        if (position == null || info == null) continue;
+
+        markers.add(
+          Marker(
+            width: 60.0,
+            height: 60.0,
+            point: position,
+            builder: (ctx) {
+              return Transform.rotate(
+                angle: (info['heading'] ?? 0) * (3.14159 / 180),
+                child: Tooltip(
+                  message:
+                  'Vol numéro : $callsign\nLieu : ${filteredFlights[callsign]}',
+                  child: Icon(
+                    Icons.airplanemode_active,
+                    color: Color(0xFF002157),
+                    size: _calculateIconSize(zoomLevel, info['altitude']),
+                  ),
+                ),
+              );
+            },
+          ),
+        );
+      }
+
+      setState(() {
+        airplaneMarkers = markers;
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Aucun vol trouvé pour $cityName.")),
+      );
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -290,6 +362,7 @@ class _AirplanesMapState extends State<AirplanesMap> {
               ),
               SizedBox(height: 24),
               TextField(
+                controller: originController, // Ajouter un contrôleur pour récupérer la saisie
                 decoration: InputDecoration(
                   labelText: 'Origin',
                   labelStyle: TextStyle(color: Color(0xFF002157)),
@@ -297,11 +370,22 @@ class _AirplanesMapState extends State<AirplanesMap> {
                     borderRadius: BorderRadius.all(Radius.circular(8.0)),
                     borderSide: BorderSide(color: Color(0xFF002157)),
                   ),
-                  suffixIcon: Icon(Icons.flight_takeoff),
+                  suffixIcon: IconButton(
+                    icon: Icon(Icons.search),
+                    onPressed: () {
+                      // Appeler la méthode filterByCity pour la recherche par ville d'origine
+                      filterByCity(originController.text, true);
+                    },
+                  ),
                 ),
+                onSubmitted: (text) {
+                  // Appeler la méthode filterByCity lorsque l'utilisateur appuie sur Entrée
+                  filterByCity(text, true);
+                },
               ),
               SizedBox(height: 24),
               TextField(
+                controller: destinationController, // Ajouter un contrôleur pour récupérer la saisie
                 decoration: InputDecoration(
                   labelText: 'Destination',
                   labelStyle: TextStyle(color: Color(0xFF002157)),
@@ -309,8 +393,18 @@ class _AirplanesMapState extends State<AirplanesMap> {
                     borderRadius: BorderRadius.all(Radius.circular(8.0)),
                     borderSide: BorderSide(color: Color(0xFF002157)),
                   ),
-                  suffixIcon: Icon(Icons.flight_land),
+                  suffixIcon: IconButton(
+                    icon: Icon(Icons.search),
+                    onPressed: () {
+                      // Appeler la méthode filterByCity pour la recherche par ville d'arrivée
+                      filterByCity(destinationController.text, false);
+                    },
+                  ),
                 ),
+                onSubmitted: (text) {
+                  // Appeler la méthode filterByCity lorsque l'utilisateur appuie sur Entrée
+                  filterByCity(text, false);
+                },
               ),
             ],
           ),
