@@ -26,14 +26,14 @@ class MyApp extends StatelessWidget {
         ),
       ),
       home: Scaffold(
-        backgroundColor: Color(0xFF002157),
+        backgroundColor: Color(0xFF1E3A5F),
         appBar: AppBar(
           centerTitle: true,
           title: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               IconButton(
-                icon: Icon(Icons.menu),
+                icon: Icon(Icons.airplanemode_active), // Icône avion
                 onPressed: () {},
               ),
               Container(
@@ -45,7 +45,22 @@ class MyApp extends StatelessWidget {
                 ),
               ),
               Spacer(),
-              Text('Air France Airplanes Map', style: TextStyle(fontSize: 20)),
+              // Titre agrandi avec une ombre
+              Text(
+                'Air France Airplanes Map',
+                style: TextStyle(
+                  fontSize: 28, // Taille augmentée
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF4A6A8A),
+                  shadows: [
+                    Shadow(
+                      offset: Offset(2.0, 2.0),
+                      blurRadius: 4.0,
+                      color: Colors.black54,
+                    ),
+                  ],
+                ),
+              ),
               Spacer(),
             ],
           ),
@@ -67,7 +82,13 @@ class AirplanesMap extends StatefulWidget {
   _AirplanesMapState createState() => _AirplanesMapState();
 }
 
+
 class _AirplanesMapState extends State<AirplanesMap> {
+  Map<String, bool> hoverStates = {}; // Store hover states
+  bool isPanelExpanded = false; // Gérer l'état du panneau
+  String? selectedMenu; // Valeur sélectionnée dans le menu déroulant
+
+
   final String openSkyUsername = 'luap';
   final String openSkyPassword = 'Luapk989#';
   final String openCageApiKey = '410626e2ecdb40ecad917ea98f71a8be';
@@ -216,19 +237,34 @@ class _AirplanesMapState extends State<AirplanesMap> {
             // Ajouter le marker avec un Tooltip
             markers.add(
               Marker(
-                width: 60.0,
-                height: 60.0,
-                point: position,
+                width: 27.0,
+                height: 27.0,
+                point: LatLng(lat ?? 0.0, lng ?? 0.0),
                 builder: (ctx) {
-                  return Transform.rotate(
-                    angle: heading != null ? heading * (3.14159 / 180) : 0.0,
-                    child: Tooltip(
-                      message:
-                      'Vol numéro : $callsign',
-                      child: Icon(
-                        Icons.airplanemode_active,
-                        color: Color(0xFF002157),
-                        size: _calculateIconSize(zoomLevel, altitude),
+                  bool isHovered = hoverStates[callsign] ?? false; // Check hover state
+                  Color markerColor = isHovered ? Color(0xFF931116) : Color(0xFF002157); // Change color on hover
+
+                  return MouseRegion(
+                    onEnter: (_) {
+                      setState(() {
+                        hoverStates[callsign] = true; // Set hover state to true
+                      });
+                    },
+                    onExit: (_) {
+                      setState(() {
+                        hoverStates[callsign] = false; // Set hover state to false
+                      });
+                    },
+                    child: Transform.rotate(
+                      angle: (heading ?? 0.0) * (3.14159 / 180), // Rotate based on heading (convert degrees to radians)
+                      child: Tooltip(
+                        message: 'Vol numéro : $callsign\nVitesse : ${velocity?.toStringAsFixed(2) ?? 'N/A'} m/s \nAltitude : $altitude m',
+                        child: IconButton(
+                          icon: Icon(Icons.airplanemode_active, color: markerColor, size: _calculateIconSize(zoomLevel, altitude)),
+                          onPressed: () {
+                            // Handle on press if needed
+                          },
+                        ),
                       ),
                     ),
                   );
@@ -340,72 +376,95 @@ class _AirplanesMapState extends State<AirplanesMap> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              TextField(
-                controller: flightSearchController,
-                decoration: InputDecoration(
-                  labelText: 'Flight Search',
-                  labelStyle: TextStyle(color: Color(0xFF002157)),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                    borderSide: BorderSide(color: Color(0xFF002157)),
+              // Menu déroulant
+              DropdownButton<String>(
+                value: selectedMenu, // La valeur sélectionnée
+                hint: Text('Select an action'),
+                items: [
+                  DropdownMenuItem(
+                    value: 'SearchFlight',
+                    child: Text('Search Flight'),
                   ),
-                  suffixIcon: IconButton(
-                    icon: Icon(Icons.search),
-                    onPressed: () {
-                      focusOnFlight(flightSearchController.text);
-                    },
+                  DropdownMenuItem(
+                    value: 'Origin',
+                    child: Text('Origin'),
                   ),
-                ),
-                onSubmitted: (text) {
-                  focusOnFlight(text);
+                  DropdownMenuItem(
+                    value: 'Destination',
+                    child: Text('Destination'),
+                  ),
+                ],
+                onChanged: (String? newValue) {
+                  setState(() {
+                    selectedMenu = newValue; // Met à jour la sélection
+                  });
                 },
               ),
               SizedBox(height: 24),
-              TextField(
-                controller: originController, // Ajouter un contrôleur pour récupérer la saisie
-                decoration: InputDecoration(
-                  labelText: 'Origin',
-                  labelStyle: TextStyle(color: Color(0xFF002157)),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                    borderSide: BorderSide(color: Color(0xFF002157)),
+              // Affiche la zone de texte en fonction de la sélection
+              if (selectedMenu == 'SearchFlight')
+                TextField(
+                  controller: flightSearchController,
+                  decoration: InputDecoration(
+                    labelText: 'Search Flight',
+                    labelStyle: TextStyle(color: Color(0xFF002157)),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                      borderSide: BorderSide(color: Color(0xFF002157)),
+                    ),
+                    suffixIcon: IconButton(
+                      icon: Icon(Icons.search),
+                      onPressed: () {
+                        focusOnFlight(flightSearchController.text);
+                      },
+                    ),
                   ),
-                  suffixIcon: IconButton(
-                    icon: Icon(Icons.search),
-                    onPressed: () {
-                      // Appeler la méthode filterByCity pour la recherche par ville d'origine
-                      filterByCity(originController.text, true);
-                    },
-                  ),
+                  onSubmitted: (text) {
+                    focusOnFlight(text);
+                  },
                 ),
-                onSubmitted: (text) {
-                  // Appeler la méthode filterByCity lorsque l'utilisateur appuie sur Entrée
-                  filterByCity(text, true);
-                },
-              ),
-              SizedBox(height: 24),
-              TextField(
-                controller: destinationController, // Ajouter un contrôleur pour récupérer la saisie
-                decoration: InputDecoration(
-                  labelText: 'Destination',
-                  labelStyle: TextStyle(color: Color(0xFF002157)),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                    borderSide: BorderSide(color: Color(0xFF002157)),
+              if (selectedMenu == 'Origin')
+                TextField(
+                  controller: originController,
+                  decoration: InputDecoration(
+                    labelText: 'Origin',
+                    labelStyle: TextStyle(color: Color(0xFF002157)),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                      borderSide: BorderSide(color: Color(0xFF002157)),
+                    ),
+                    suffixIcon: IconButton(
+                      icon: Icon(Icons.search),
+                      onPressed: () {
+                        filterByCity(originController.text, true);
+                      },
+                    ),
                   ),
-                  suffixIcon: IconButton(
-                    icon: Icon(Icons.search),
-                    onPressed: () {
-                      // Appeler la méthode filterByCity pour la recherche par ville d'arrivée
-                      filterByCity(destinationController.text, false);
-                    },
-                  ),
+                  onSubmitted: (text) {
+                    filterByCity(text, true);
+                  },
                 ),
-                onSubmitted: (text) {
-                  // Appeler la méthode filterByCity lorsque l'utilisateur appuie sur Entrée
-                  filterByCity(text, false);
-                },
-              ),
+              if (selectedMenu == 'Destination')
+                TextField(
+                  controller: destinationController,
+                  decoration: InputDecoration(
+                    labelText: 'Destination',
+                    labelStyle: TextStyle(color: Color(0xFF002157)),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                      borderSide: BorderSide(color: Color(0xFF002157)),
+                    ),
+                    suffixIcon: IconButton(
+                      icon: Icon(Icons.search),
+                      onPressed: () {
+                        filterByCity(destinationController.text, false);
+                      },
+                    ),
+                  ),
+                  onSubmitted: (text) {
+                    filterByCity(text, false);
+                  },
+                ),
             ],
           ),
         ),
@@ -438,6 +497,7 @@ class _AirplanesMapState extends State<AirplanesMap> {
       ],
     );
   }
+
 
   Future<Map<String, dynamic>> getFlightPositions(String icao24) async {
     final url = 'https://opensky-network.org/api/tracks/all?icao24=$icao24&time=0';
