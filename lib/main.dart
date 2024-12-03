@@ -68,6 +68,8 @@ class AirplanesMap extends StatefulWidget {
 }
 
 class _AirplanesMapState extends State<AirplanesMap> {
+  Map<String, bool> hoverStates = {}; // Store hover states
+
   final String openSkyUsername = 'luap';
   final String openSkyPassword = 'Luapk989#';
   final String openCageApiKey = '410626e2ecdb40ecad917ea98f71a8be';
@@ -216,19 +218,34 @@ class _AirplanesMapState extends State<AirplanesMap> {
             // Ajouter le marker avec un Tooltip
             markers.add(
               Marker(
-                width: 60.0,
-                height: 60.0,
-                point: position,
+                width: 27.0,
+                height: 27.0,
+                point: LatLng(lat ?? 0.0, lng ?? 0.0),
                 builder: (ctx) {
-                  return Transform.rotate(
-                    angle: heading != null ? heading * (3.14159 / 180) : 0.0,
-                    child: Tooltip(
-                      message:
-                      'Vol numéro : $callsign',
-                      child: Icon(
-                        Icons.airplanemode_active,
-                        color: Color(0xFF002157),
-                        size: _calculateIconSize(zoomLevel, altitude),
+                  bool isHovered = hoverStates[callsign] ?? false; // Check hover state
+                  Color markerColor = isHovered ? Color(0xFF931116) : Color(0xFF002157); // Change color on hover
+
+                  return MouseRegion(
+                    onEnter: (_) {
+                      setState(() {
+                        hoverStates[callsign] = true; // Set hover state to true
+                      });
+                    },
+                    onExit: (_) {
+                      setState(() {
+                        hoverStates[callsign] = false; // Set hover state to false
+                      });
+                    },
+                    child: Transform.rotate(
+                      angle: (heading ?? 0.0) * (3.14159 / 180), // Rotate based on heading (convert degrees to radians)
+                      child: Tooltip(
+                        message: 'Vol numéro : $callsign\nVitesse : ${velocity?.toStringAsFixed(2) ?? 'N/A'} m/s \nAltitude : $altitude m',
+                        child: IconButton(
+                          icon: Icon(Icons.airplanemode_active, color: markerColor, size: _calculateIconSize(zoomLevel, altitude)),
+                          onPressed: () {
+                            // Handle on press if needed
+                          },
+                        ),
                       ),
                     ),
                   );
