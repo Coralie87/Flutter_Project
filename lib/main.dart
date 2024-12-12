@@ -32,10 +32,6 @@ class MyApp extends StatelessWidget {
           title: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              IconButton(
-                icon: Icon(Icons.menu),
-                onPressed: () {},
-              ),
               Container(
                 margin: EdgeInsets.symmetric(horizontal: 8.0),
                 child: SvgPicture.asset(
@@ -51,10 +47,6 @@ class MyApp extends StatelessWidget {
           ),
           elevation: 0,
           toolbarHeight: 80,
-          actions: [
-            IconButton(icon: Icon(Icons.search), onPressed: () {}),
-            IconButton(icon: Icon(Icons.settings), onPressed: () {}),
-          ],
         ),
         body: AirplanesMap(),
       ),
@@ -68,25 +60,116 @@ class AirplanesMap extends StatefulWidget {
 }
 
 class _AirplanesMapState extends State<AirplanesMap> {
-  final String openSkyUsername = 'luap';
-  final String openSkyPassword = 'Luapk989#';
-  final String openCageApiKey = '410626e2ecdb40ecad917ea98f71a8be';
+  Map<String, bool> hoverStates = {}; // Store hover states
+
+  final String openSkyUsername = 'AzizPistol';
+  final String openSkyPassword = 'Ce@Pt37sgNdSiWu';
+  final String openCageApiKey = '0aea0cceb8c2469bb704c442fff2c9db';
 
   List<Marker> airplaneMarkers = [];
   double zoomLevel = 2.0;
   Timer? timer;
   Map<String, String> locationCache = {}; // Cache pour stocker les géolocalisations
 
+  final MapController mapController = MapController();
+  Map<String, LatLng> flightPositions = {};
+  Map<String, Map<String, dynamic>> flightInfo = {};
+  TextEditingController flightSearchController = TextEditingController();
+  TextEditingController originController = TextEditingController();
+  TextEditingController destinationController = TextEditingController();
+
+  // Placez la méthode `filterByCity` ici
+  void filterByCity(String cityName, bool isOrigin) async {
+    if (cityName.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Veuillez entrer une ville valide.")),
+      );
+      return;
+    }
+
+    Map<String, String> filteredFlights = {};
+
+    for (var callsign in flightInfo.keys) {
+      final info = flightInfo[callsign];
+      if (info == null) continue;
+
+      final icao24 = info['icao24'];
+      if (icao24 == null) continue;
+
+      final positions = await getFlightPositions(icao24);
+      if (positions.isEmpty) continue;
+
+      final location = await getLocationDetails(
+        positions[isOrigin ? 'departure' : 'arrival']['lat'],
+        positions[isOrigin ? 'departure' : 'arrival']['lng'],
+      );
+
+      if (location.toLowerCase().contains(cityName.toLowerCase())) {
+        filteredFlights[callsign] = location;
+      }
+    }
+
+    if (filteredFlights.isNotEmpty) {
+      List<Marker> markers = [];
+
+      for (var callsign in filteredFlights.keys) {
+        final position = flightPositions[callsign];
+        final info = flightInfo[callsign];
+        if (position == null || info == null) continue;
+
+        markers.add(
+          Marker(
+            width: 60.0,
+            height: 60.0,
+            point: position,
+            builder: (ctx) {
+              return Transform.rotate(
+                angle: (info['heading'] ?? 0) * (3.14159 / 180),
+                child: Tooltip(
+                  message:
+                  'Vol numéro : $callsign\nLieu : ${filteredFlights[callsign]}',
+                  child: Icon(
+                    Icons.airplanemode_active,
+                    color: Color(0xFF002157),
+                    size: _calculateIconSize(zoomLevel, info['altitude']),
+                  ),
+                ),
+              );
+            },
+          ),
+        );
+      }
+
+      setState(() {
+        airplaneMarkers = markers;
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Aucun vol trouvé pour $cityName.")),
+      );
+    }
+  }
+
+  late List<Polyline> _polylines;
   @override
   void initState() {
     super.initState();
+
+    // Initialize the polylines list
+    _polylines = [];
+
+    // Fetch airplanes periodically
     fetchAirplanes();
-    timer = Timer.periodic(Duration(minutes: 2), (Timer t) => fetchAirplanes());
+    timer = Timer.periodic(Duration(seconds: 10), (Timer t) => fetchAirplanes());
   }
+
 
   @override
   void dispose() {
     timer?.cancel();
+    flightSearchController.dispose();
+    originController.dispose();
+    destinationController.dispose();
     super.dispose();
   }
 
@@ -109,33 +192,68 @@ class _AirplanesMapState extends State<AirplanesMap> {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         List<Marker> markers = [];
+        flightPositions.clear();
+        flightInfo.clear();
 
         for (var airplane in data['states']) {
-          String? icao24 = airplane[0]?.toLowerCase();
-          String? callsign = airplane[1];
+          String? icao24 = airplane[0]?.toLowerCase(); // Identifiant unique
+          String? callsign = airplane[1]?.trim().toUpperCase(); // Numéro de vol
           double? lat = airplane[6];
           double? lng = airplane[5];
           double? heading = airplane[10];
           double? altitude = airplane[13];
+          double? velocity = airplane[9];
 
           if (callsign != null && callsign.startsWith("AFR") && icao24 != null) {
+            LatLng position = LatLng(lat ?? 0, lng ?? 0);
+            flightPositions[callsign] = position;
+            flightInfo[callsign] = {
+              'altitude': altitude,
+              'velocity': velocity,
+              'heading': heading,
+              'icao24': icao24,
+            };
+
+            // Ajouter le marker avec un Tooltip
             markers.add(
               Marker(
-                width: 60.0,
-                height: 60.0,
-                point: LatLng(lat ?? 0, lng ?? 0),
-                builder: (ctx) => GestureDetector(
-                  onTap: () => fetchFlightDetails(context, icao24),
-                  child: Transform.rotate(
-                    angle: heading != null ? heading * (3.14159 / 180) : 0.0,
-                    child: Icon(
-                      Icons.airplanemode_active,
-                      color: Color(0xFF002157),
-                      size: _calculateIconSize(zoomLevel, altitude),
+                width: 27.0,
+                height: 27.0,
+                point: LatLng(lat ?? 0.0, lng ?? 0.0),
+                builder: (ctx) {
+                  bool isHovered = hoverStates[callsign] ?? false; // Check hover state
+                  Color markerColor = isHovered ? Color(0xFF931116) : Color(0xFF002157); // Change color on hover
+
+                  return MouseRegion(
+                    onEnter: (_) {
+                      setState(() {
+                        hoverStates[callsign] = true; // Set hover state to true
+                      });
+                    },
+                    onExit: (_) {
+                      setState(() {
+                        hoverStates[callsign] = false; // Set hover state to false
+                      });
+                    },
+                    child: Transform.rotate(
+                      angle: (heading ?? 0.0) * (3.14159 / 180), // Rotate based on heading (convert degrees to radians)
+                      child: Tooltip(
+                        message: 'Vol numéro : $callsign\nVitesse : ${velocity?.toStringAsFixed(2) ?? 'N/A'} m/s \nAltitude : $altitude m',
+                        child: IconButton(
+                          icon: Icon(Icons.airplanemode_active, color: markerColor, size: _calculateIconSize(zoomLevel, altitude)),
+                          onPressed: () {
+                            // Your onClick logic here
+                            print('Marker clicked: $callsign');
+                            // You can also call a function to show more details or perform other actions
+                            drawFlightLine(icao24,);
+                          },
+                        ),
+                      ),
                     ),
-                  ),
-                ),
+                  );
+                },
               ),
+
             );
           }
         }
@@ -151,6 +269,205 @@ class _AirplanesMapState extends State<AirplanesMap> {
     } catch (e) {
       print("Error fetching airplanes: $e");
     }
+  }
+
+  Future<void> focusOnFlight(String flightNumber) async {
+    String searchKey = flightNumber.trim().toUpperCase();
+    LatLng? position = flightPositions[searchKey];
+    var info = flightInfo[searchKey];
+
+    if (position != null && info != null) {
+      double targetZoom = 8.0; // Niveau de zoom cible
+      double step = 0.2; // Pas de zoom progressif
+      double currentZoom = mapController.zoom;
+
+      // Récupérer les détails via l'API OpenCage
+      final positions = await getFlightPositions(info['icao24']);
+      final departureLocation = await getLocationDetails(
+        positions['departure']['lat'],
+        positions['departure']['lng'],
+      );
+      final arrivalLocation = await getLocationDetails(
+        positions['arrival']['lat'],
+        positions['arrival']['lng'],
+      );
+
+      // Démarrer un zoom progressif
+      Timer.periodic(Duration(milliseconds: 50), (timer) {
+        if (currentZoom < targetZoom) {
+          currentZoom += step; // Augmenter le niveau de zoom
+          mapController.move(position, currentZoom); // Centrer sur l'avion
+        } else {
+          timer.cancel(); // Arrêter une fois le zoom cible atteint
+
+          // Afficher les détails une fois le zoom terminé
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text("Infos du vol $flightNumber"),
+                content: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text('Numéro : $flightNumber'),
+                    Text('Vitesse : ${info['velocity']?.toStringAsFixed(2) ?? 'N/A'} m/s'),
+                    Text('Altitude : ${info['altitude']} m'),
+                    Text('Départ : $departureLocation'),
+                    Text('Position actuelle : $arrivalLocation'),
+                  ],
+                ),
+                actions: [
+                  TextButton(
+                    child: Text("Fermer"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        }
+      });
+    } else {
+      // Afficher une notification si le vol est introuvable
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Vol $flightNumber non trouvé')),
+      );
+    }
+  }
+
+
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Container(
+          width: 250,
+          padding: EdgeInsets.all(24.0),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.3),
+                spreadRadius: 2,
+                blurRadius: 5,
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              TextField(
+                controller: flightSearchController,
+                decoration: InputDecoration(
+                  labelText: 'Flight Search',
+                  labelStyle: TextStyle(color: Color(0xFF002157)),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                    borderSide: BorderSide(color: Color(0xFF002157)),
+                  ),
+                  suffixIcon: IconButton(
+                    icon: Icon(Icons.search),
+                    onPressed: () {
+                      focusOnFlight(flightSearchController.text);
+                    },
+                  ),
+                ),
+                onSubmitted: (text) {
+                  focusOnFlight(text);
+                },
+              ),
+              SizedBox(height: 24),
+              TextField(
+                controller: originController, // Ajouter un contrôleur pour récupérer la saisie
+                decoration: InputDecoration(
+                  labelText: 'Origin',
+                  labelStyle: TextStyle(color: Color(0xFF002157)),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                    borderSide: BorderSide(color: Color(0xFF002157)),
+                  ),
+                  suffixIcon: IconButton(
+                    icon: Icon(Icons.search),
+                    onPressed: () {
+                      // Appeler la méthode filterByCity pour la recherche par ville d'origine
+                      filterByCity(originController.text, true);
+                    },
+                  ),
+                ),
+                onSubmitted: (text) {
+                  // Appeler la méthode filterByCity lorsque l'utilisateur appuie sur Entrée
+                  filterByCity(text, true);
+                },
+              ),
+              SizedBox(height: 24),
+              TextField(
+                controller: destinationController, // Ajouter un contrôleur pour récupérer la saisie
+                decoration: InputDecoration(
+                  labelText: 'Position actuelle',
+                  labelStyle: TextStyle(color: Color(0xFF002157)),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                    borderSide: BorderSide(color: Color(0xFF002157)),
+                  ),
+                  suffixIcon: IconButton(
+                    icon: Icon(Icons.search),
+                    onPressed: () {
+                      // Appeler la méthode filterByCity pour la recherche par ville d'arrivée
+                      filterByCity(destinationController.text, false);
+                    },
+                  ),
+                ),
+                onSubmitted: (text) {
+                  // Appeler la méthode filterByCity lorsque l'utilisateur appuie sur Entrée
+                  filterByCity(text, false);
+                },
+              ),
+            ],
+          ),
+        ),
+        Flexible(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: FlutterMap(
+              mapController: mapController,
+              options: MapOptions(
+                center: LatLng(0, 0),
+                zoom: zoomLevel,
+                onPositionChanged: (MapPosition pos, bool hasGesture) {
+                  setState(() {
+                    zoomLevel = pos.zoom ?? 2.0;
+                  });
+                },
+                onTap: (_, __) {
+                  // Effacer les polylignes lorsque l'utilisateur clique sur la carte
+                  setState(() {
+                    _polylines.clear();
+                  });
+                },
+              ),
+              children: [
+                TileLayer(
+                  urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                  subdomains: ['a', 'b', 'c'],
+                ),
+                PolylineLayer(
+                  polylines: _polylines, // Dynamically updated list of polylines
+                ),
+                MarkerLayer(
+                  markers: airplaneMarkers,
+                ),
+              ],
+            ),
+          ),
+        ),
+
+
+      ],
+    );
   }
 
   Future<Map<String, dynamic>> getFlightPositions(String icao24) async {
@@ -184,6 +501,8 @@ class _AirplanesMapState extends State<AirplanesMap> {
     return {};
   }
 
+
+
   Future<void> fetchFlightDetails(BuildContext context, String icao24) async {
     final positions = await getFlightPositions(icao24);
 
@@ -206,6 +525,7 @@ class _AirplanesMapState extends State<AirplanesMap> {
       return;
     }
 
+    // Appels OpenCage
     final departureLocation = await getLocationDetails(
       positions['departure']['lat'],
       positions['departure']['lng'],
@@ -215,6 +535,7 @@ class _AirplanesMapState extends State<AirplanesMap> {
       positions['arrival']['lng'],
     );
 
+    // Affichage
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -237,6 +558,60 @@ class _AirplanesMapState extends State<AirplanesMap> {
       ),
     );
   }
+
+  Future<Map<String, LatLng>> fetchFlightLine(String icao24) async {
+    try {
+      // Fetch flight positions
+      final positions = await getFlightPositions(icao24);
+
+      // Validate the data
+      if (positions.isEmpty || positions['departure'] == null || positions['arrival'] == null) {
+        throw Exception('Invalid departure or arrival data.');
+      }
+
+      // Create LatLng objects for departure and arrival
+      final departure = LatLng(
+        positions['departure']['lat'],
+        positions['departure']['lng'],
+      );
+      final arrival = LatLng(
+        positions['arrival']['lat'],
+        positions['arrival']['lng'],
+      );
+
+      // Return a map containing both positions
+      return {'departure': departure, 'arrival': arrival};
+    } catch (e) {
+      print('Error fetching flight positions: $e');
+      rethrow; // Re-throw the error to handle it in the calling function if needed
+    }
+  }
+
+  void drawFlightLine(String icao24) async {
+    try {
+      // Fetch flight positions
+      final positions = await fetchFlightLine(icao24);
+
+      // Create a new polyline
+      final flightLine = Polyline(
+        points: [positions['departure']!, positions['arrival']!],
+        strokeWidth: 2.0,
+        color: Color(0xFF002157),
+      );
+
+      // Update the polyline list
+      setState(() {
+        _polylines.add(flightLine);
+      });
+    } catch (e) {
+      print('Error drawing flight line: $e');
+    }
+  }
+
+
+
+
+
 
   Future<String> getLocationDetails(double lat, double lng) async {
     String key = "$lat,$lng";
@@ -274,31 +649,5 @@ class _AirplanesMapState extends State<AirplanesMap> {
     }
 
     return "Inconnu";
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Flexible(
-          child: FlutterMap(
-            options: MapOptions(
-              center: LatLng(48.8566, 2.3522),
-              zoom: zoomLevel,
-              onTap: (tapPosition, point) {
-                print("Carte cliquée à : $point");
-              },
-            ),
-            children: [
-              TileLayer(
-                urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                subdomains: ['a', 'b', 'c'],
-              ),
-              MarkerLayer(markers: airplaneMarkers),
-            ],
-          ),
-        ),
-      ],
-    );
   }
 }
